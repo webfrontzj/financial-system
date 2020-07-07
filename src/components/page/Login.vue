@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import axios from '../../utils/request'
 export default {
     data: function() {
         return {
@@ -43,11 +44,21 @@ export default {
     },
     methods: {
         submitForm() {
-            this.$refs.login.validate(valid => {
+            this.$refs.login.validate(async valid => {
                 if (valid) {
-                    this.$message.success('登录成功');
-                    localStorage.setItem('ms_username', this.param.username);
-                    this.$router.push('/');
+                    let token=await axios.post('/login/',{
+                        username:this.param.username,
+                        password:this.param.password
+                    });
+                    if(token.code == 200){
+                        this.$message.success('登录成功');
+                        localStorage.setItem('ms_username', this.param.username);
+                        localStorage.setItem('token',token.data);
+                        this.$router.push('/');
+                    }else{
+                        this.$message.error(token.msg);
+                    }     
+                    
                 } else {
                     this.$message.error('请输入账号和密码');
                     console.log('error submit!!');

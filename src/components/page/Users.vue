@@ -21,6 +21,7 @@
                 </el-select>
                 <el-input v-model="query.name" placeholder="用户名" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
+                <el-button type="primary"><router-link to="/users/add">添加用户</router-link></el-button>
             </div>
             <el-table
                 :data="tableData"
@@ -31,30 +32,27 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="name" label="用户名"></el-table-column>
-                <el-table-column label="账户余额">
-                    <template slot-scope="scope">￥{{scope.row.money}}</template>
-                </el-table-column>
+                <el-table-column prop="uid" label="ID" width="55" align="center"></el-table-column>
+                <el-table-column prop="username" label="用户名"></el-table-column>
                 <el-table-column label="头像(查看大图)" align="center">
                     <template slot-scope="scope">
                         <el-image
                             class="table-td-thumb"
-                            :src="scope.row.thumb"
-                            :preview-src-list="[scope.row.thumb]"
+                            :src="scope.row.photo"
+                            :preview-src-list="[scope.row.photo]"
                         ></el-image>
                     </template>
                 </el-table-column>
-                <el-table-column prop="address" label="地址"></el-table-column>
-                <el-table-column label="状态" align="center">
+                <el-table-column prop="phone_number" label="手机号"></el-table-column>
+                <el-table-column label="角色" align="center">
                     <template slot-scope="scope">
                         <el-tag
-                            :type="scope.row.state==='成功'?'success':(scope.row.state==='失败'?'danger':'')"
-                        >{{scope.row.state}}</el-tag>
+                            type='success'
+                        >{{scope.row.identity}}</el-tag>
                     </template>
                 </el-table-column>
 
-                <el-table-column prop="date" label="注册时间"></el-table-column>
+                <!-- <el-table-column prop="date" label="注册时间"></el-table-column> -->
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -87,10 +85,10 @@
         <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="70px">
                 <el-form-item label="用户名">
-                    <el-input v-model="form.name"></el-input>
+                    <el-input v-model="form.username"></el-input>
                 </el-form-item>
-                <el-form-item label="地址">
-                    <el-input v-model="form.address"></el-input>
+                <el-form-item label="手机号">
+                    <el-input v-model="form.phone_number"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -102,7 +100,7 @@
 </template>
 
 <script>
-import { fetchData } from '../../api/index';
+import axios from '../../utils/request'
 export default {
     name: 'basetable',
     data() {
@@ -127,13 +125,10 @@ export default {
         this.getData();
     },
     methods: {
-        // 获取 easy-mock 的模拟数据
-        getData() {
-            fetchData(this.query).then(res => {
-                console.log(res);
-                this.tableData = res.list;
-                this.pageTotal = res.pageTotal || 50;
-            });
+        // 获取 用户列表
+        async getData() {
+            const users=await axios.get('/user');
+            this.tableData=users.data;
         },
         // 触发搜索按钮
         handleSearch() {
@@ -146,7 +141,14 @@ export default {
             this.$confirm('确定要删除吗？', '提示', {
                 type: 'warning'
             })
-                .then(() => {
+                .then(async() => {
+                    await axios.request({
+                        url:'/user',
+                        method:'delete',
+                        data:{
+                            uid:row.uid
+                        }
+                    })
                     this.$message.success('删除成功');
                     this.tableData.splice(index, 1);
                 })
@@ -173,8 +175,13 @@ export default {
             this.editVisible = true;
         },
         // 保存编辑
-        saveEdit() {
+        async saveEdit() {
             this.editVisible = false;
+            await axios.put('/user/',{
+                uid:this.form.uid,
+                username:this.form.username,
+                phone_number:this.form.phone_number
+            });
             this.$message.success(`修改第 ${this.idx + 1} 行成功`);
             this.$set(this.tableData, this.idx, this.form);
         },

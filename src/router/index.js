@@ -22,7 +22,12 @@ export default new Router({
                 {
                     path: '/users',
                     component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Users.vue'),
-                    meta: { title: '用户管理' }
+                    meta: { title: '用户管理' },
+                },
+                {
+                    path: '/users/add',
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/AddUser.vue'),
+                    meta: { title: '添加用户' },
                 },
                 {
                     path: '/icon',
