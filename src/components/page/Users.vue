@@ -32,7 +32,7 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="uid" label="ID" width="55" align="center"></el-table-column>
+                <el-table-column prop="uid" label="ID" width="85" align="center"></el-table-column>
                 <el-table-column prop="username" label="用户名"></el-table-column>
                 <el-table-column label="头像(查看大图)" align="center">
                     <template slot-scope="scope">
@@ -55,17 +55,31 @@
                 <!-- <el-table-column prop="date" label="注册时间"></el-table-column> -->
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
+                        <!-- 弹层式编辑 -->
+                        <!-- <el-button
+                            type="text"
+                            icon="el-icon-edit"
+                            @click="handleEdit(scope.$index, scope.row)"
+                        >编辑</el-button> -->
                         <el-button
                             type="text"
                             icon="el-icon-edit"
                             @click="handleEdit(scope.$index, scope.row)"
-                        >编辑</el-button>
+                        >
+                            <router-link :to="{path:'/users/edit?uid='+scope.row.uid}">编辑</router-link>
+                        </el-button>
                         <el-button
                             type="text"
                             icon="el-icon-delete"
                             class="red"
                             @click="handleDelete(scope.$index, scope.row)"
                         >删除</el-button>
+                        <el-button
+                            :disabled="scope.row.is_shield || identity != 0"
+                            type="text"
+                            icon="el-icon-remove-outline"
+                            @click="handleShield(scope.$index, scope.row)"
+                        >屏蔽</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -118,7 +132,8 @@ export default {
             pageTotal: 0,
             form: {},
             idx: -1,
-            id: -1
+            id: -1,
+            identity:0
         };
     },
     created() {
@@ -128,7 +143,8 @@ export default {
         // 获取 用户列表
         async getData() {
             const users=await axios.get('/user');
-            this.tableData=users.data;
+            this.identity=users.data.identity;
+            this.tableData=users.data.user_list;
         },
         // 触发搜索按钮
         handleSearch() {
@@ -153,6 +169,19 @@ export default {
                     this.tableData.splice(index, 1);
                 })
                 .catch(() => {});
+        },
+        //屏蔽用户
+        async handleShield(index,row){
+            const result=await axios.put('/user/',{
+                uid:row.uid,
+                is_shield:true
+            });
+            if(result.code == 200){
+                this.$message.success('屏蔽成功');
+                this.tableData[index].is_shield=true;
+            }else{
+                this.$message.error(result.msg);
+            }
         },
         // 多选操作
         handleSelectionChange(val) {

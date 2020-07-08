@@ -9,7 +9,8 @@ module.exports = {
                 changeOrigin:true,
                 pathRewrite:{
                     '/':''
-                }
+                },
+                // auth:localStorage.getItem('token')
             }
         }
     }

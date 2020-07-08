@@ -30,6 +30,11 @@ export default new Router({
                     meta: { title: '添加用户' },
                 },
                 {
+                    path: '/users/edit',
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/EditUser.vue'),
+                    meta: { title: '修改个人信息' },
+                },
+                {
                     path: '/icon',
                     component: () => import(/* webpackChunkName: "icon" */ '../components/page/Icon.vue'),
                     meta: { title: '自定义图标' }
