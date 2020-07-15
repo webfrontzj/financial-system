@@ -67,6 +67,16 @@ export default {
                     title: '用户管理'
                 },
                 {
+                    icon: 'el-icon-data-line',
+                    index: 'start_manage',
+                    title: '期初管理'
+                },
+                {
+                    icon: 'el-icon-lx-calendar',
+                    index: 'subject',
+                    title: '科目管理'
+                },
+                {
                     icon: 'el-icon-lx-cascades',
                     index: 'table',
                     title: '基础表格'

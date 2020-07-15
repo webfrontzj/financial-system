@@ -35,6 +35,21 @@ export default new Router({
                     meta: { title: '修改个人信息' },
                 },
                 {
+                    path: '/start_manage',
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/StartManage.vue'),
+                    meta: { title: '期初管理' },
+                },
+                {
+                    path: '/subject',
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Subject.vue'),
+                    meta: { title: '科目管理' },
+                },
+                {
+                    path: '/subject/add/:code?',
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/SubjectAdd.vue'),
+                    meta: { title: '编辑科目' },
+                },
+                {
                     path: '/icon',
                     component: () => import(/* webpackChunkName: "icon" */ '../components/page/Icon.vue'),
                     meta: { title: '自定义图标' }
