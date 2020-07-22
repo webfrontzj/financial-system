@@ -120,14 +120,13 @@ export default {
         };
     },
     created() {
-        // this.getData();
+        this.getData();
     },
     methods: {
         // 获取 用户列表
         async getData() {
-            const users=await axios.get('/user');
-            this.identity=users.data.identity;
-            this.tableData=users.data.user_list;
+            const users=await axios.get('/subject');
+            console.log(users);
         },
         // 触发搜索按钮
         handleSearch() {

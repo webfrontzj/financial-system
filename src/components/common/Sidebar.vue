@@ -63,6 +63,16 @@ export default {
                 },
                 {
                     icon: 'el-icon-user',
+                    index: 'village',
+                    title: '村庄管理'
+                },
+                {
+                    icon: 'el-icon-user',
+                    index: 'account_book',
+                    title: '帐套管理'
+                },
+                {
+                    icon: 'el-icon-user',
                     index: 'users',
                     title: '用户管理'
                 },

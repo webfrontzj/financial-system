@@ -11,22 +11,22 @@
             <div class="form-box">
                 <el-form ref="form" :model="form" label-width="80px">
                     <el-form-item label="科目编码">
-                        <el-input v-model="form.name"></el-input>
+                        <el-input v-model="form.subject_num"></el-input>
                     </el-form-item>
                     <el-form-item label="科目名称">
-                        <el-input v-model="form.name"></el-input>
+                        <el-input v-model="form.subject_name"></el-input>
                     </el-form-item>
                     <el-form-item label="上级科目">
-                        <el-input v-model="form.name"></el-input>
+                        <el-input v-model="form.subject_father"></el-input>
                     </el-form-item>
                     <el-form-item label="科目类别">
-                        <el-select v-model="form.region" placeholder="请选择">
+                        <el-select v-model="form.subject_type" placeholder="请选择">
                             <el-option key="bbk" label="流动资产" value="bbk"></el-option>
                             <el-option key="xtc" label="固定资产" value="xtc"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="余额方向">
-                        <el-radio-group v-model="form.resource">
+                        <el-radio-group v-model="form.balance_type">
                             <el-radio label="借"></el-radio>
                             <el-radio label="贷"></el-radio>
                         </el-radio-group>
@@ -53,78 +53,48 @@
 </template>
 
 <script>
+import axios from '../../utils/request'
 export default {
     name: 'baseform',
     data() {
         return {
-            options: [
-                {
-                    value: 'guangdong',
-                    label: '广东省',
-                    children: [
-                        {
-                            value: 'guangzhou',
-                            label: '广州市',
-                            children: [
-                                {
-                                    value: 'tianhe',
-                                    label: '天河区'
-                                },
-                                {
-                                    value: 'haizhu',
-                                    label: '海珠区'
-                                }
-                            ]
-                        },
-                        {
-                            value: 'dongguan',
-                            label: '东莞市',
-                            children: [
-                                {
-                                    value: 'changan',
-                                    label: '长安镇'
-                                },
-                                {
-                                    value: 'humen',
-                                    label: '虎门镇'
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    value: 'hunan',
-                    label: '湖南省',
-                    children: [
-                        {
-                            value: 'changsha',
-                            label: '长沙市',
-                            children: [
-                                {
-                                    value: 'yuelu',
-                                    label: '岳麓区'
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ],
+            soa_id:'',
             form: {
-                name: '',
-                region: '',
-                date1: '',
-                date2: '',
-                delivery: true,
-                type: ['步步高'],
-                resource: '小天才',
-                desc: '',
-                options: []
+                subject_num: '',
+                subject_name: '',
+                subject_father: '',
+                subject_type: '',
+                balance_type: '',
+                balance_type:'',
+                soa_id:'',
+                num:'',
+                money:''
             }
         };
     },
+    created(){
+        this.soa_id=localStorage.getItem('accountBookId');
+        const soa_id=axios.get('/subject/setofaccount');
+            console.log(soa_id);
+    },
     methods: {
         onSubmit() {
-            this.$message.success('提交成功！');
+            
+            const result=axios.post('/subject',{
+                subject_num:this.form.success,
+                subject_name:this.form.subject_name,
+                subject_father:this.form.subject_father,
+                subject_type:this.form.subject_type,
+                balance_type:this.form.balance_type,
+                num:this.form.num,
+                money:this.form.money,
+                soa_id:this.soa_id
+            });
+            if(result.code == 200){
+                this.$message.success('提交成功！');
+                this.$router.push('/subject');
+            }
+            
         }
     }
 };

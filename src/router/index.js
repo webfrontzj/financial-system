@@ -20,6 +20,16 @@ export default new Router({
                     meta: { title: '系统首页' }
                 },
                 {
+                    path: '/village',
+                    component: () => import(/* webpackChunkName: "accountbook" */ '../components/page/Village.vue'),
+                    meta: { title: '村庄管理' },
+                },
+                {
+                    path: '/account_book',
+                    component: () => import(/* webpackChunkName: "accountbook" */ '../components/page/AccountBook.vue'),
+                    meta: { title: '帐套管理' },
+                },
+                {
                     path: '/users',
                     component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Users.vue'),
                     meta: { title: '用户管理' },

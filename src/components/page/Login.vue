@@ -54,7 +54,8 @@ export default {
                         this.$message.success('登录成功');
                         localStorage.setItem('ms_username', this.param.username);
                         localStorage.setItem('token',token.data.token);
-                        this.$router.push('/');
+                        // localStorage.setItem('accountBook',token.data.soa_list)
+                        this.$router.push('/account_book');
                     }else{
                         this.$message.error(token.msg);
                     }     
