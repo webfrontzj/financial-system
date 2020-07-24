@@ -20,6 +20,16 @@ export default new Router({
                     meta: { title: '系统首页' }
                 },
                 {
+                    path: '/fzhs',
+                    component: () => import(/* webpackChunkName: "accountbook" */ '../components/page/Fzhs.vue'),
+                    meta: { title: '辅助核算' },
+                },
+                {
+                    path: '/voucher_add',
+                    component: () => import(/* webpackChunkName: "accountbook" */ '../components/page/VoucherAdd.vue'),
+                    meta: { title: '添加凭证' },
+                },
+                {
                     path: '/village',
                     component: () => import(/* webpackChunkName: "accountbook" */ '../components/page/Village.vue'),
                     meta: { title: '村庄管理' },

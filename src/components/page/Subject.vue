@@ -32,11 +32,13 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="code" label="科目编码" width="85" align="center"></el-table-column>
-                <el-table-column prop="name" align="center" label="科目名称"></el-table-column>
-                <el-table-column prop="prev" align="center" label="上级科目"></el-table-column>
-                <el-table-column prop="classify" align="center" label="科目类别"></el-table-column>
-                <el-table-column prop="direction" align="center" label="余额方向"></el-table-column>
+                <el-table-column prop="subject_num" label="科目编码" width="85" align="center"></el-table-column>
+                <el-table-column prop="subject_name" align="center" label="科目名称"></el-table-column>
+                <el-table-column prop="parent" align="center" label="上级科目"></el-table-column>
+                <el-table-column prop="money" align="center" label="金额"></el-table-column>
+                <el-table-column prop="num" align="center" label="数量"></el-table-column>
+                <el-table-column prop="subject_type" align="center" label="科目类别"></el-table-column>
+                <el-table-column prop="balance_type" align="center" label="余额方向"></el-table-column>
                 
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
@@ -44,9 +46,8 @@
                         <el-button
                             type="text"
                             icon="el-icon-edit"
-                            @click="handleEdit(scope.$index, scope.row)"
                         >
-                            <router-link :to="{path:'/users/edit?uid='+scope.row.uid}">编辑</router-link>
+                            <router-link :to="{path:'/subject/add/'+scope.row.id}">编辑</router-link>
                         </el-button>
                         <el-button
                             type="text"
@@ -100,15 +101,7 @@ export default {
                 pageIndex: 1,
                 pageSize: 10
             },
-            tableData: [
-                {
-                    code:102,
-                    name:'科目一',
-                    prev:'父级科目',
-                    classify:'流动资产',
-                    direction:'借'
-                }
-            ],
+            tableData: [],
             multipleSelection: [],
             delList: [],
             editVisible: false,
@@ -125,8 +118,11 @@ export default {
     methods: {
         // 获取 用户列表
         async getData() {
-            const users=await axios.get('/subject');
-            console.log(users);
+            const subjects=await axios.get('/subject?type=list');
+            if(subjects.code == 200){
+                this.tableData=subjects.data
+            }
+            
         },
         // 触发搜索按钮
         handleSearch() {
@@ -141,10 +137,10 @@ export default {
             })
                 .then(async() => {
                     await axios.request({
-                        url:'/user',
+                        url:'/subject/',
                         method:'delete',
                         data:{
-                            uid:row.uid
+                            sub_id:row.id
                         }
                     })
                     this.$message.success('删除成功');

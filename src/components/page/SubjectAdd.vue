@@ -19,26 +19,31 @@
                     <el-form-item label="上级科目">
                         <el-input v-model="form.subject_father"></el-input>
                     </el-form-item>
+                    <el-form-item label="余额">
+                        <el-input v-model="form.money"></el-input>
+                    </el-form-item>
+                    <el-form-item label="余额数量">
+                        <el-input v-model="form.num"></el-input>
+                    </el-form-item>
                     <el-form-item label="科目类别">
                         <el-select v-model="form.subject_type" placeholder="请选择">
-                            <el-option key="bbk" label="流动资产" value="bbk"></el-option>
-                            <el-option key="xtc" label="固定资产" value="xtc"></el-option>
+                            <el-option key="zc" label="资产" value=0></el-option>
+                            <el-option key="fz" label="负债" value=1></el-option>
+                            <el-option key="qy" label="权益" value=2></el-option>
+                            <el-option key="cb" label="成本" value=3></el-option>
+                            <el-option key="sy" label="损益" value=4></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="余额方向">
                         <el-radio-group v-model="form.balance_type">
-                            <el-radio label="借"></el-radio>
-                            <el-radio label="贷"></el-radio>
+                            <el-radio label=0>借</el-radio>
+                            <el-radio label=1>贷</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     
                     <el-form-item label="辅助核算">
-                        <el-checkbox-group v-model="form.type">
-                            <el-checkbox label="客户" name="type"></el-checkbox>
-                            <el-checkbox label="供应商" name="type"></el-checkbox>
-                            <el-checkbox label="职员" name="type"></el-checkbox>
-                            <el-checkbox label="部门" name="type"></el-checkbox>
-                            <el-checkbox label="存货" name="type"></el-checkbox>
+                        <el-checkbox-group v-model="form.assists">
+                            <el-checkbox v-for="item in ass_list" :key="item.id" :label="item.id">{{item.name}}</el-checkbox>
                         </el-checkbox-group>
                     </el-form-item>
                     
@@ -59,6 +64,8 @@ export default {
     data() {
         return {
             soa_id:'',
+            code:null,
+            ass_list:[],
             form: {
                 subject_num: '',
                 subject_name: '',
@@ -66,34 +73,67 @@ export default {
                 subject_type: '',
                 balance_type: '',
                 balance_type:'',
+                assists:'',
                 soa_id:'',
                 num:'',
                 money:''
             }
         };
     },
-    created(){
+    async created(){
         this.soa_id=localStorage.getItem('accountBookId');
-        const soa_id=axios.get('/subject/setofaccount');
-            console.log(soa_id);
+        
+        if(this.$route.params.code){
+            this.code=this.$route.params.code;
+            let result=await axios.get(`/subject?sub_id=${this.code}`);
+            if(result.code == 200){
+                this.form=result.data.sub_info;
+                this.ass_list=result.data.ass_list;
+            }
+        }else{
+            let result=await axios.get('/subject?type=info');
+            if(result.code == 200){
+                this.ass_list=result.data;
+            }
+        }
     },
     methods: {
-        onSubmit() {
-            
-            const result=axios.post('/subject',{
-                subject_num:this.form.success,
-                subject_name:this.form.subject_name,
-                subject_father:this.form.subject_father,
-                subject_type:this.form.subject_type,
-                balance_type:this.form.balance_type,
-                num:this.form.num,
-                money:this.form.money,
-                soa_id:this.soa_id
-            });
-            if(result.code == 200){
-                this.$message.success('提交成功！');
-                this.$router.push('/subject');
+        async onSubmit() {
+            if(this.code){
+                const result=await axios.put('/subject/',{
+                    sub_id:this.code,
+                    subject_num:this.form.success,
+                    subject_name:this.form.subject_name,
+                    // subject_father:this.form.subject_father,
+                    subject_type:this.form.subject_type,
+                    balance_type:this.form.balance_type,
+                    num:this.form.num,
+                    money:this.form.money,
+                    assists:this.form.assists.join(','),
+                    soa_id:this.soa_id
+                });
+                if(result.code == 200){
+                    this.$message.success('提交成功！');
+                    this.$router.push({path:'/subject'});
+                }
+            }else{
+                const result=await axios.post('/subject/',{
+                    subject_num:this.form.success,
+                    subject_name:this.form.subject_name,
+                    // subject_father:this.form.subject_father,
+                    subject_type:this.form.subject_type,
+                    balance_type:this.form.balance_type,
+                    num:this.form.num,
+                    money:this.form.money,
+                    assists:this.form.assists.join(','),
+                    soa_id:this.soa_id
+                });
+                if(result.code == 200){
+                    this.$message.success('提交成功！');
+                    this.$router.push({path:'/subject'});
+                }
             }
+            
             
         }
     }

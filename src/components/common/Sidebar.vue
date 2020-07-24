@@ -62,6 +62,22 @@ export default {
                     title: '系统首页'
                 },
                 {
+                    icon: 'el-icon-lx-calendar',
+                    title: '凭证管理',
+                    index:'2',
+                    subs: [
+                        {
+                            index: 'voucher_add',
+                            title: '添加凭证'
+                        },
+                    ]
+                },
+                {
+                    icon: 'el-icon-user',
+                    index: 'fzhs',
+                    title: '辅助核算'
+                },
+                {
                     icon: 'el-icon-user',
                     index: 'village',
                     title: '村庄管理'
